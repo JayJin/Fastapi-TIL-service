@@ -8,7 +8,11 @@ from jose import JWTError, jwt
 
 from enum import StrEnum
 
-SECRET_KEY = "THIS_IS_SUPER_SECRET_KEY"
+from config import get_settings
+
+settings = get_settings()
+
+SECRET_KEY = settings.jwt_secret
 ALGORITHM = "HS256"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
