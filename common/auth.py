@@ -1,5 +1,9 @@
+from dataclasses import dataclass
+from fastapi.security import OAuth2PasswordBearer
+from typing import Annotated
+
 from datetime import datetime, timedelta
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
 from jose import JWTError, jwt
 
 from enum import StrEnum
@@ -7,11 +11,19 @@ from enum import StrEnum
 SECRET_KEY = "THIS_IS_SUPER_SECRET_KEY"
 ALGORITHM = "HS256"
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
+
 # 토큰에 역할 정의
 class Role(StrEnum):
     ADMIN = "admin"
     USER = "user"
     
+@dataclass
+class CurrentUser:
+    id: str
+    role: Role
+
+
 
 def create_access_token(
     payload: dict, 
@@ -34,3 +46,14 @@ def decode_access_token(token: str):
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    
+def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    payload = decode_access_token(token)
+    
+    user_id: str = payload.get("user_id")
+    role: str = payload.get("role")
+    
+    if not user_id  or not role or role != Role.USER:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    
+    return CurrentUser(user_id, Role(role))

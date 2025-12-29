@@ -10,6 +10,8 @@ from containers import Container
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 
+from common.auth import CurrentUser, get_current_user
+
 router = APIRouter(prefix="/users")
 
 class CreateUserBody(BaseModel):
@@ -33,6 +35,10 @@ class GetUsersResponse(BaseModel):
     page: int
     users: list[UserResponse]
 
+class UpdateUserBody(BaseModel):
+    name: str | None = Field(min_length=2, max_length=32, default=None)
+    password: str | None = Field(min_length=8, max_length=32, default=None)
+
 @router.post("", status_code=201)
 @inject
 def create_user(
@@ -49,17 +55,17 @@ def create_user(
     return created_user
 
 
-@router.put("/{user_id}")
+@router.put("", response_model=UserResponse)
 @inject
 def update_user(
-    user_id: str,
-    user: UpdateUser,
+    current_user: Annotated[CurrentUser, Depends(get_current_user)],
+    body: UpdateUserBody,
     user_service: UserService = Depends(Provide[Container.user_service]),
     ):
     user = user_service.update_user(
-        user_id=user_id,
-        name=user.name,
-        password=user.password
+        user_id=current_user.id,
+        name=body.name,
+        password=body.password
     )
     return user
 
