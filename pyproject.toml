@@ -1,0 +1,18 @@
+[project]
+name = "fastapi-test"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.17.2",
+    "bcrypt==4.0.1",
+    "dependency-injector>=4.48.3",
+    "fastapi>=0.127.0",
+    "mysqlclient>=2.2.7",
+    "passlib[bcrypt]>=1.7.4",
+    "py-ulid>=1.0.3",
+    "requests>=2.32.5",
+    "sqlalchemy>=2.0.45",
+    "uvicorn[standard]>=0.40.0",
+]
