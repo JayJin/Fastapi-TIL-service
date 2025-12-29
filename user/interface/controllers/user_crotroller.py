@@ -1,6 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, EmailStr, Field
+from datetime import datetime
 
 from user.application.user_service import UserService
 from dependency_injector.wiring import inject, Provide
@@ -18,6 +19,18 @@ class UpdateUser(BaseModel):
     name: str | None = None
     password: str | None = None
 
+class UserResponse(BaseModel):
+    id: str
+    name: str
+    email: EmailStr
+    created_at: datetime
+    updated_at: datetime
+
+class GetUsersResponse(BaseModel):
+    total_count: int
+    page: int
+    users: list[UserResponse]
+
 @router.post("", status_code=201)
 @inject
 def create_user(
@@ -25,7 +38,7 @@ def create_user(
     user_service: UserService = Depends(Provide[Container.user_service]),       # 의존성 주입
     # user_service: UserService = Depends(Provide["user_service"]),
     # user_service: Annotated[UserService, Depends(UserService)]
-    ):
+    ) -> UserResponse:
     created_user = user_service.create_user(
         name=user.name,
         email=user.email,
@@ -54,7 +67,7 @@ def get_users(
     page: int = 1,
     items_per_page: int = 10,
     user_service: UserService = Depends(Provide[Container.user_service]),
-    ):
+    ) -> GetUsersResponse:
     total_count, users = user_service.get_users(page, items_per_page)
     return {
         "total_count": total_count, 
