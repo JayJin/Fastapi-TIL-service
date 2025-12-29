@@ -86,11 +86,11 @@ def get_users(
 @router.delete("", status_code=204)
 @inject
 def delete_user(
-    user_id: str,
+    current_user: Annotated[CurrentUser, Depends(get_current_user)],
     user_service: UserService = Depends(Provide[Container.user_service]),
     ):
     # 다른 유저를 삭제할 수 없도록 토큰에서 유저 아이디를 구한다.
-    user_service.delete_user(user_id)
+    user_service.delete_user(current_user.id)
     
 @router.post("/login")
 @inject
