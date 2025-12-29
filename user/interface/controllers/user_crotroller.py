@@ -10,7 +10,7 @@ from containers import Container
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 
-from common.auth import CurrentUser, get_current_user
+from common.auth import CurrentUser, get_current_user, get_admin_user
 
 router = APIRouter(prefix="/users")
 
@@ -74,6 +74,7 @@ def update_user(
 def get_users(
     page: int = 1,
     items_per_page: int = 10,
+    current_user: CurrentUser = Depends(get_admin_user),
     user_service: UserService = Depends(Provide[Container.user_service]),
     ) -> GetUsersResponse:
     total_count, users = user_service.get_users(page, items_per_page)
