@@ -1,6 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 
 from user.application.user_service import UserService
 from dependency_injector.wiring import inject, Provide
@@ -10,9 +10,9 @@ from containers import Container
 router = APIRouter(prefix="/users")
 
 class CreateUserBody(BaseModel):
-    name: str
-    email: str
-    password: str
+    name: str = Field(min_length=2, max_length=32)
+    email: EmailStr= Field(max_length=64)
+    password: str = Field(min_length=8, max_length=32)
 
 class UpdateUser(BaseModel):
     name: str | None = None

@@ -12,6 +12,7 @@ dependencies = [
     "mysqlclient>=2.2.7",
     "passlib[bcrypt]>=1.7.4",
     "py-ulid>=1.0.3",
+    "pydantic[email]>=2.12.5",
     "requests>=2.32.5",
     "sqlalchemy>=2.0.45",
     "uvicorn[standard]>=0.40.0",
