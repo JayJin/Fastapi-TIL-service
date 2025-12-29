@@ -29,3 +29,7 @@ class IUserRepository(metaclass=ABCMeta):
     @abstractmethod
     def get_users(self, page: int, items_per_page: int) -> tuple[int, list[User]]:      # 페이징 처리
         raise NotImplementedError
+    
+    @abstractmethod
+    def delete(self, id: str):
+        raise NotImplementedError
