@@ -58,5 +58,6 @@ def get_users(
     total_count, users = user_service.get_users(page, items_per_page)
     return {
         "total_count": total_count, 
+        "page": page,
         "users": users,
-        "page": page,}
+}
